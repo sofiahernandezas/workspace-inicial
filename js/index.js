@@ -24,3 +24,15 @@ document.getElementById('logoutButton').addEventListener('click', function() {
     localStorage.removeItem('isLoggedIn');
     window.location.href = 'login.html';
 });
+//desafiate 2:
+document.addEventListener('DOMContentLoaded', function() {
+    
+    const username = localStorage.getItem('username');
+
+        if (username) {
+          const usernameDisplay = document.getElementById('username-display');
+      usernameDisplay.textContent = `${username}`;
+    } else {
+      console.log('No se encontró un nombre de usuario en localStorage.');
+    }
+  });
