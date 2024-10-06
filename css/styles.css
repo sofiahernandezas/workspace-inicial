@@ -22,12 +22,6 @@ nav a {
   user-select: none;
 }
 
-@media (min-width: 768px) {
-  .bd-placeholder-img-lg {
-    font-size: 3.5rem;
-  }
-}
-
 .jumbotron {
   height: 50vh;
   padding: 5em inherit;
@@ -41,13 +35,6 @@ nav a {
   font-weight: bold;
 }
 
-@media (min-width: 768px) {
-  .jumbotron {
-    padding-top: 6rem;
-    padding-bottom: 6rem;
-  }
-}
-
 .jumbotron p:last-child {
   margin-bottom: 0;
 }
@@ -57,7 +44,9 @@ nav a {
 }
 
 .jumbotron .container {
-  max-width: 40rem;
+  width: 80%;
+  max-width: 1200px;
+  margin: 0 auto;
   background-color: rgba(255, 255, 255, 0.5);
   border-radius: 10px;
   text-shadow: 1px 1px 2px grey;
@@ -74,6 +63,7 @@ footer {
 
 footer p {
   margin-bottom: .25rem;
+  display: flex;
 }
 
 .site-header a {
@@ -390,4 +380,25 @@ h1{
 .PrecioCompleto{
   font-size:160%;
 }
+}
+
+#searchInput {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.product-item {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.fa-star.checked {
+  color: #ffd700; /* Color amarillo */
+}
+
+.fa-star {
+  color: #ccc; /* Color gris claro */
 }
