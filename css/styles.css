@@ -47,9 +47,9 @@ nav a {
   width: 80%;
   max-width: 1200px;
   margin: 0 auto;
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.5); 
   border-radius: 10px;
-  text-shadow: 1px 1px 2px grey;
+  text-shadow: 1px 1px 2px grey; 
 }
 
 .jumbotron .lead {
@@ -165,9 +165,9 @@ footer p {
   display: none;
 }
 
-main {
+/*main {
   min-height: calc(100vh - 210px);
-}
+}*/
 
 a.custom-card,
 a.custom-card:hover {
@@ -180,14 +180,12 @@ a.custom-card:hover {
 }
 
 /*producto*/
-#container {
+#containerProd {
   flex-direction: column;
-  gap: 20px;
 }
+
 .product {
-  
     display: flex;
-   
     padding: 20px;
     border: 1px solid #ccc;
     background-color: #f9f9f9;
@@ -383,10 +381,11 @@ h1{
 }
 
 #searchInput {
-  width: 100%;
+  width: 90%; /* Ajusta el ancho al 80% */
   padding: 10px;
-  margin-bottom: 20px;
+  margin: 0 auto 20px auto; /* Centra horizontalmente con 'margin: 0 auto' */
   font-size: 16px;
+  display: block; 
 }
 
 .product-item {
@@ -401,4 +400,270 @@ h1{
 
 .fa-star {
   color: #ccc; /* Color gris claro */
+}
+
+/* Dark mode */
+
+/* Estilo para las tarjetas en modo noche */ 
+.bg-dark .card.mb-4.shadow-sm.custom-card.cursor-active { background-color: #343a40; } 
+/*.bg-dark .card-text { color: #ffffff;} /* Color de texto blanco */  
+
+body.bg-dark .card { background-color: #343a40; 
+  color: white; 
+  border: 1px solid #444; }
+
+.bg-dark .btn.btn-light.btn-lg.btn-block {  background-color: #212529;
+  border: none;
+ color: white;}
+
+ .bg-dark .album.py-5.bg-light {
+  background-color: #212529 !important; /* Usar !important para forzar el fondo oscuro */
+}
+
+.bg-dark .table {
+  background-color: #343a40; 
+  color: white; 
+}
+
+.bg-dark .list-group-item.list-group-item-action { background-color: #343a40; 
+  color: white; 
+  border: 1px solid #444; }
+
+.bg-dark .img-thumbnail {
+  background-color: transparent; /* Elimina el fondo de la imagen */
+  border-color: #444; /* Opcional: Cambia el color del borde en modo oscuro si lo deseas */
+  }
+
+.bg-dark .row.product { 
+  background-color: #343a40; 
+  color: white; 
+  border: none;
+  }
+
+ .bg-dark #ratings { 
+    background-color: #343a40; 
+    color: white; 
+    border: none;
+}
+
+.bg-dark .modal-content { 
+  background-color: #343a40; 
+  color: white; 
+  border: none;
+}
+.bg-dark #containerProd h4, .bg-dark #containerProd p {
+  color: white; 
+}
+
+/* Estilos para el contenedor del carrito */
+.cart-container {
+  position: relative; /* Hace que los elementos dentro se posicionen relativos a él */
+}
+
+/* Estilos para el número (superíndice) */
+#cartCount {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.8); /* Fondo blanco ligeramente transparente */
+  color:  #343a40; /* Texto gris oscuro para menos contraste */
+  width: 16px;
+  height: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%; /* Círculo perfecto */
+  top: -2px;
+  right: -2px;
+  font-size: 0.6rem; /* Tamaño de fuente más pequeño */
+  font-weight: 600; /* Un poco más de peso sin ser muy grueso */
+  box-shadow: none; /* Sin sombra para un look más limpio */
+  border: none; /* Sin borde para mantener la simplicidad */
+}
+
+/* Optimized Cart Sidebar Styles */
+.cart-sidebar {
+  position: fixed;
+  top: 0;
+  right: -300px;
+  width: 300px;
+  height: 100%;
+  background: #f7f7f7;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+  transition: right 0.3s;
+  padding: 15px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cart-sidebar.show {
+  right: 0;
+}
+
+.cart-sidebar h2 {
+  font-size: 16px;
+  margin-bottom: 15px;
+  color: #333;
+  text-align: center;
+}
+
+/* Cart Item Styles */
+.cart-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+  font-size: 0.85em;
+}
+
+.cart-item .image {
+  flex: 0 0 40px;
+  padding-right: 8px;
+}
+
+.cart-item .image img {
+  width: 100%;
+  height: auto;
+}
+
+.cart-item .name {
+  flex: 1;
+  text-align: left;
+  font-size: 0.85em;
+}
+
+.cart-item .price,
+.cart-item .currency {
+  font-size: 0.85em;
+}
+
+.cart-item .price {
+  flex: 0 0 55px;
+  text-align: right;
+}
+
+.cart-item .currency {
+  flex: 0 0 35px;
+  text-align: center;
+  margin-right: 6px;
+}
+
+.cart-item .quantity {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.cart-item .quantity span {
+  width: 20px;
+  text-align: center;
+}
+
+.cart-item .quantity .btn {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  font-size: 0.7em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+/* Bottom Buttons */
+.cart-sidebar .btn-group {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 12px;
+}
+
+.cart-sidebar .btn-group button {
+  width: 48%;
+  font-size: 0.85em;
+}
+
+/* Dark Mode Styles */
+body.bg-dark .cart-sidebar {
+  background: #343a40;
+  color: #ffffff;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.8);
+}
+
+body.bg-dark .cart-item {
+  border-bottom: 1px solid #444;
+}
+
+body.bg-dark .cart-item .price,
+body.bg-dark .cart-item .currency,
+body.bg-dark .cart-item .name {
+  color: #ffffff;
+}
+
+body.bg-dark .cart-item .quantity .btn {
+  background-color: #444;
+  color: #ffffff;
+}
+
+body.bg-dark .btn-group .goToCart {
+  background-color: #ffc107;
+  color: #333;
+}
+
+/* Contenedor para el campo de entrada y el logo */
+.mb-3 {
+  position: relative;
+}
+
+#numeroTarjeta {
+  --logo-url: none;
+  --logo-display: none;
+  background-image: var(--logo-url);
+  background-size: 30px;
+  background-repeat: no-repeat;
+  background-position: calc(100% - 10px) center;
+}
+
+/* Keep active buttons and headings in blue */
+#payInUSD.active,
+#payInUYU.active {
+    background-color: #007bff !important; /* Blue color */
+    color: white !important;
+    border-color: #007bff !important;
+}
+
+.text-primary {
+    color: #007bff !important; /* Blue color for headings */
+}
+
+/* Set the total amount to blue */
+#total {
+  color: #28a745 !important; /* Blue color for total amount */
+  font-size: 1.25rem; /* Adjust size if needed */
+}
+#ratings {
+
+  margin-top: 1%;
+  padding: 15px;
+  background-color: #f9f9f9; /* Fondo claro */
+  border-radius: 8px; /* Bordes redondeados */
+}
+.ratings-row {
+  padding: 5px;
+  border-bottom: 1px solid #ccc; /* Línea para separar las calificaciones */
+}
+
+.ratings-row p {
+  font-size: 14px; /* Tamaño de fuente ajustado */
+  margin-bottom: 5px;
+}
+
+.ratings-row h5 {
+  margin: 0; /* Eliminar márgenes para el nombre del usuario */
+  font-size: 16px; /* Tamaño de fuente del nombre */
+  font-weight: bold; /* Destacar el nombre del usuario */
+}
+#ratings h4 {
+  font-weight: bolder;
 }
