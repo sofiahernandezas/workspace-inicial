@@ -1,9 +1,15 @@
 document.addEventListener("DOMContentLoaded", function() {
   const catID = localStorage.getItem("catID");
+  const token = localStorage.getItem('token');  // Obtener el token de localStorage
   let products = [];
 
   if (catID) {
-    fetch(`https://japceibal.github.io/emercado-api/cats_products/${catID}.json`)
+    fetch(`http://localhost:3000/cats_products/${catID}`, {
+      method: 'GET',
+      headers: {
+          'Authorization': `Bearer ${token}`  // Enviar el token en el encabezado Authorization
+      }
+  })
       .then(response => response.json())
       .then(data => {
         document.querySelector('.lead').textContent = `Verás aquí todos los productos de la categoría ${data.catName}.`;
@@ -85,7 +91,7 @@ const filteredProducts = [...filteredProductsByName, ...filteredProductsByDescri
 
 // Función para mostrar datos de los productos
 function showData(products) {
-  const container = document.getElementById("container");
+  const container = document.getElementById("containerProd");
   container.innerHTML = ''; // Limpiar el contenedor antes de mostrar los nuevos productos
  
   if (products.length === 0) {
@@ -95,7 +101,7 @@ function showData(products) {
       const formattedCost = formatNumber(product.cost);
       const productHTML = `
         <div onclick="setProductID(${product.id})" class="list-group-item list-group-item-action cursor-active">
-          <div class="row mb-4 product">
+          <div class="row product">
             <div class="col-md-3">
               <img src="${product.image}" class="img-fluid" alt="${product.name}">
             </div>
@@ -123,3 +129,4 @@ function setProductID(id) {
   localStorage.setItem("productID", id);
   window.location = "product-info.html";
 }
+

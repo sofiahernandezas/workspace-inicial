@@ -1,11 +1,24 @@
 const productID = localStorage.getItem("productID");
+
+const token = localStorage.getItem('token');  // Obtener el token de localStorage
+
 document.addEventListener("DOMContentLoaded", function () {
 
+
     if (productID) {
-        fetch(`https://japceibal.github.io/emercado-api/products/${productID}.json`)
+        fetch(`http://localhost:3000/products/${productID}`, 
+            {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`  // Enviar el token en el encabezado Authorization
+                }
+            })
             .then(response => response.json())
             .then(data => {
                 const product = data;
+                console.log(data);
+
+
                 console.log(product); // Verificar los productos
                 showData(product); // Mostrar el producto
 
@@ -17,10 +30,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     const comment = document.getElementById('rating-text').value;
                     const score = document.getElementById('rating-score').textContent.match(/\d+/)[0]; // Obtiene el valor de la puntuación seleccionada en las estrellas
-                    const username = localStorage.getItem('username') || 'Usuario Anónimo';  // Obtener el nombre de usuario desde localStorage, o un valor por defecto
+
+                    // Obtener los datos del perfil del usuario desde localStorage
+                    const userProfile = JSON.parse(localStorage.getItem('userProfile'));
+                    const users = JSON.parse(localStorage.getItem('users'));
+
+                    // Inicializar la variable username
+                    let username = 'Usuario Anónimo';
+
+                    // Verificar si el perfil de usuario tiene firstName y lastName
+                    if (userProfile && userProfile.firstName && userProfile.lastName && userProfile.firstName !== '' && userProfile.lastName !== '') {
+                        username = `${userProfile.firstName}_${userProfile.lastName}`; // Combinar el nombre y apellido
+                    } else if (users && users.length > 0 && users[0].email) {
+                        username = users[0].email; // Si no hay nombre, usar el email del primer usuario
+                    }
+                    //const username = localStorage.getItem('username') || 'Usuario Anónimo' 
 
                     var options = { year: '2-digit', month: '2-digit', day: '2-digit' };
                     const currentDate = new Date().toLocaleDateString("en-GB", options);
+
 
                     if (comment && score) {
                         // Crear un nuevo objeto de calificación
@@ -35,7 +63,12 @@ document.addEventListener("DOMContentLoaded", function () {
                         let storedRatings = JSON.parse(localStorage.getItem(`ratings-${productID}`)) || [];
                         storedRatings.push(newRating); // Agregar la nueva calificación al array de calificaciones almacenadas.
                         localStorage.setItem(`ratings-${productID}`, JSON.stringify(storedRatings)); // Guardar el array actualizado de calificaciones en localStorage.
-
+                        console.log(storedRatings);
+                        console.log(JSON.parse(localStorage.getItem(`ratings-${productID}`)));
+                        
+                        // fetchRatings(); 
+                        // Actualizar el promedio de estrellas
+                        updateAverageStars(storedRatings);
                         // Mostrar la calificación inmediatamente
                         addRatingToDOM(newRating);  // Agregar la nueva calificación al DOM sin recargar la página
 
@@ -55,6 +88,17 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error('No se ha encontrado un productID en el almacenamiento local.');
     }
 });
+function updateAverageStars(ratings) {
+    console.log({ ratings });
+
+    const totalScore = ratings.reduce((sum, rating) => sum + rating.score, 0);
+    const averageScore = totalScore / ratings.length;
+    console.log(totalScore);
+    console.log(averageScore);
+
+    // Renderizar el nuevo promedio de estrellas
+    renderAverageStars(averageScore);
+}
 
 function showData(product) {
     const container = document.getElementById("container");
@@ -104,6 +148,7 @@ function showData(product) {
                     <p>${product.description}</p>
                     <h4>Precio: ${product.currency} ${formattedCost}</h4>
                     <p>Cantidad de vendidos: ${product.soldCount}</p>
+                    <button id="buy-button" class="btn btn-primary">Comprar</button>
                 </div>  
                 </div>
                 
@@ -121,9 +166,9 @@ function showData(product) {
             </div>
         </div>
         <!-- Sección de calificaciones -->
-          <h4 class="mt-4">Calificaciones de los usuarios</h4>
-            <div id="ratings"></div>
-             </div> 
+        <div id="ratings">
+            <h4 >Calificaciones de los usuarios</h4>
+        </div>
         <!-- Formulario para realizar una calificación -->
         <div class="container mt-4">
             <h4>Deja tu calificación</h4>
@@ -150,7 +195,25 @@ function showData(product) {
         </div>
         `;
 
+
         container.innerHTML = productInfoHTML;
+        // Asignar evento al botón de compra
+        document.getElementById("buy-button").addEventListener("click", function () {
+            const productToCart = {
+                name: product.name,
+                cost: product.cost,
+                currency: product.currency,
+                image: product.images[0], // Usa la primera imagen del array
+                quantity: 1 // La cantidad inicial es 1 cuando el usuario compra
+            };
+
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            cart.push(productToCart);
+            localStorage.setItem("cart", JSON.stringify(cart)); // Guarda el carrito en el localStorage
+            window.location.href = "cart.html"; // Redirige al carrito
+        });
+
+
 
         // Ahora que las estrellas del formulario están en el DOM, agrega los eventos de clic
         const starRatingContainer = document.getElementById('star-rating');
@@ -179,23 +242,34 @@ function updateRating(rating) {
 }
 
 function fetchRatings() {
-    fetch(`https://japceibal.github.io/emercado-api/products_comments/${productID}.json`)
+    fetch(`http://localhost:3000/products_comments/${productID}`,{
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`  // Enviar el token en el encabezado Authorization
+        }
+    })
         .then(response => response.json())
         .then(data => {
             const ratingsContainer = document.getElementById('ratings');
 
             let totalScore = 0;  // Variable para almacenar la suma de las calificaciones
-            let numberOfRatings = data.length;  // Número total de calificaciones
+            let storedRatings = JSON.parse(localStorage.getItem(`ratings-${productID}`)) || [];
 
+            data = new Set([...data, ...storedRatings])
             data.forEach(comentario => {
                 const divComentario = document.createElement('div');
                 divComentario.classList.add('ratings-row');
+                console.log(storedRatings);
+                console.log(totalScore);
+                console.log({ comentario });
+
 
                 // Agregar la fecha si está disponible
                 const dateElement = document.createElement('p');
                 var options = { year: '2-digit', month: '2-digit', day: '2-digit' };
                 dateElement.textContent = comentario.dateTime ? `Fecha: ${new Date(comentario.dateTime).toLocaleDateString("en-GB", options)}` : ""; // Usar la fecha de la API o un mensaje por defecto
                 divComentario.appendChild(dateElement);
+
 
                 // Crear el nombre del usuario
                 const userElement = document.createElement('h5');
@@ -221,13 +295,11 @@ function fetchRatings() {
                 comentarioElement.textContent = comentario.description;
                 divComentario.appendChild(comentarioElement);
 
-        
-
                 ratingsContainer.appendChild(divComentario);
             });
 
             // Calcular el promedio de las calificaciones
-            let averageScore = totalScore / numberOfRatings;
+            let averageScore = totalScore / data.size;
             renderAverageStars(averageScore);  // Mostrar las estrellas promedio
         })
         .catch(error => console.error('Error al cargar las calificaciones:', error));
@@ -235,23 +307,38 @@ function fetchRatings() {
 
 // Función para renderizar las estrellas basadas en el promedio
 function renderAverageStars(averageScore) {
-    console.log('Average score:', averageScore);  // Para verificar el promedio de estrellas
+    console.log('Average score:', averageScore); // Para verificar el promedio de estrellas
 
     const starsContainer = document.getElementById('average-stars-container');
-    starsContainer.innerHTML = '';  // Limpiar el contenedor antes de añadir nuevas estrellas
+    starsContainer.innerHTML = ''; // Limpiar el contenedor antes de añadir nuevas estrellas
 
-    const roundedAverage = Math.round(averageScore);  // Redondear el promedio
+    const roundedAverage = Math.round(averageScore); // Redondear el promedio
 
     // Crear las estrellas para el promedio
     for (let i = 0; i < 5; i++) {
         const estrella = document.createElement('span');
         estrella.classList.add('fa', 'fa-star');
         if (i < roundedAverage) {
-            estrella.classList.add('checked');  // Estrella activa
+            estrella.classList.add('checked'); // Estrella activa
         }
         starsContainer.appendChild(estrella);
     }
+
+    // Añadir evento de clic para redirigir a la sección de calificaciones
+    starsContainer.style.cursor = 'pointer'; // Cambiar el cursor al pasar sobre las estrellas
+    starsContainer.addEventListener('click', () => {
+        const ratingsSection = document.getElementById('ratings'); // Seleccionar la sección de calificaciones
+        if (ratingsSection) {
+            ratingsSection.scrollIntoView({
+                behavior: 'smooth', // Desplazamiento suave
+                block: 'start'      // Alinear al inicio de la sección
+            });
+        } else {
+            console.error('No se encontró la sección de calificaciones.');
+        }
+    });
 }
+
 
 // Función para agregar una calificación al DOM
 function addRatingToDOM(rating) {
@@ -259,16 +346,16 @@ function addRatingToDOM(rating) {
     const divComentario = document.createElement('div');
     divComentario.classList.add('ratings-row');
 
-     // Mostrar la fecha de la calificación
-     const dateElement = document.createElement('p');
-     console.log(rating);
-     dateElement.textContent = `Fecha: ${rating.date}`; // Mostrar la fecha
-     divComentario.appendChild(dateElement);
+    // Mostrar la fecha de la calificación
+    const dateElement = document.createElement('p');
+    dateElement.textContent = `Fecha: ${rating.date}`; // Mostrar la fecha
+    divComentario.appendChild(dateElement);
 
     // Crear el nombre del usuario
     const userElement = document.createElement('h5');
     userElement.textContent = rating.user;
     divComentario.appendChild(userElement);
+
 
     // Crear las estrellas usando Font Awesome
     const calificacion = Math.round(rating.score);
@@ -286,7 +373,7 @@ function addRatingToDOM(rating) {
     comentarioElement.textContent = rating.description;
     divComentario.appendChild(comentarioElement);
 
-       // Insertar el comentario al contenedor de calificaciones
+    // Insertar el comentario al contenedor de calificaciones
     ratingsContainer.appendChild(divComentario);
 }
 
@@ -308,8 +395,9 @@ function setProductID(id) {
     window.location = "product-info.html"
 }
 
+// Función para formatear números con separación de miles
 function formatNumber(num) {
-    return num.toLocaleString('es-ES');
+    return num.toLocaleString('es-ES', { minimumFractionDigits: 0, useGrouping: true });
 }
 
 
